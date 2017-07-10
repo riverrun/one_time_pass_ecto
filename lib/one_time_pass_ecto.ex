@@ -22,13 +22,12 @@ defmodule OneTimePassEcto do
       * window - the number of attempts, before and after the current one, allowed
         * the default is 1 (1 interval before and 1 interval after)
 
-  See the documentation for the Comeonin.Otp module for more details
+  See the documentation for the OneTimePassEcto.Base module for more details
   about generating and verifying one-time passwords.
   """
 
   import Ecto.{Changeset, Query}
-  import Phauxth.Login.Base
-  alias Comeonin.Otp
+  alias OneTimePassEcto.Base
 
   @doc """
   Check the one-time password, and return {:ok, user} if the one-time
@@ -41,19 +40,6 @@ defmodule OneTimePassEcto do
   See the `One-time password options` in this module's documentation
   for available options to be used as the second argument to this
   function.
-
-  ## Examples
-
-  In the example below, Phauxth.Otp.verify is called within the create
-  function in the controller.
-
-      def create(conn, %{"otp_session" => params}) do
-        case Phauxth.Otp.verify(params, MyApp.Repo, MyApp.User) do
-          {:ok, user} -> handle_successful_otp_login
-          {:error, message} -> handle_error
-        end
-      end
-
   """
   def verify(params, repo, user_schema, opts \\ [])
   def verify(%{"id" => id, "hotp" => hotp}, repo, user_schema, opts) do
@@ -62,33 +48,20 @@ defmodule OneTimePassEcto do
       |> check_hotp(hotp, opts)
       |> update_otp(repo)
     end)
-    log(result, id, "successful one-time password login")
+    result
   end
   def verify(%{"id" => id, "totp" => totp}, repo, user_schema, opts) do
     repo.get(user_schema, id)
     |> check_totp(totp, opts)
     |> update_otp(repo)
-    |> log(id, "successful one-time password login")
-  end
-
-  @doc """
-  Prints out a log message and returns {:ok, user} or {:error, message}.
-  """
-  def log({:ok, user}, user_id, ok_log) do
-    Log.info(%Log{user: user_id, message: ok_log})
-    {:ok, Map.drop(user, Config.drop_user_keys)}
-  end
-  def log({:error, error_log}, user_id, _) do
-    Log.warn(%Log{user: user_id, message: error_log})
-    {:error, "Invalid credentials"}
   end
 
   defp check_hotp(user, hotp, opts) do
-    {user, Otp.check_hotp(hotp, user.otp_secret, [last: user.otp_last] ++ opts)}
+    {user, Base.check_hotp(hotp, user.otp_secret, [last: user.otp_last] ++ opts)}
   end
 
   defp check_totp(user, totp, opts) do
-    {user, Otp.check_totp(totp, user.otp_secret, opts)}
+    {user, Base.check_totp(totp, user.otp_secret, opts)}
   end
 
   defp get_user_with_lock(repo, user_schema, id) do
