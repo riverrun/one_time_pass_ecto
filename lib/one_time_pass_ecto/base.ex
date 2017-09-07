@@ -13,22 +13,6 @@ defmodule OneTimePassEcto.Base do
   to provide two factor authentication (2FA), which forms a layered approach
   to user authentication. The advantage of 2FA over just using passwords is
   that an attacker would face an additional challenge to being authorized.
-
-  ## Warning about implementation
-
-  It is important not to allow the one-time password to be reused within
-  the timeframe that it is valid.
-
-  For TOTPs, one method of preventing reuse is to compare the output of
-  check_totp (the `last` value) with the previous output. The output
-  should be greater than the previous `last` value.
-
-  In the case of HOTPs, it is important that the database is locked
-  from the time the `last` value is checked until the `last` value is
-  updated.
-
-  For an example implementation, see the [Openmaize OnetimePass
-  module](https://github.com/riverrun/openmaize/blob/master/lib/openmaize/onetime_pass.ex).
   """
 
   use Bitwise
@@ -36,15 +20,22 @@ defmodule OneTimePassEcto.Base do
   @doc """
   Generate a secret key to be used with one-time passwords.
 
-  By default, this function creates a 32 character base32 string, which
-  can be used with the other functions in this module.
+  By default, this function creates a 16 character base32 (80-bit)
+  string, which is compatible with Google Authenticator.
 
-  It is also possible to create a 16 or 24 character long secret, but
-  this is not recommended.
+  It is also possible to generate 26 character (128-bit) and
+  32 character (160-bit) secret keys.
+
+  ## RFC 4226 secret key length recommendations
+
+  According to RFC 4226, the secret key length must be at least
+  128 bits long, and the recommended length is 160 bits.
   """
-  def gen_secret(secret_length \\ 32)
-  def gen_secret(secret_length) when secret_length in [16, 24, 32] do
-    trunc(secret_length / 1.6) |> :crypto.strong_rand_bytes |> Base.encode32
+  def gen_secret(secret_length \\ 16)
+  def gen_secret(secret_length) when secret_length in [16, 26, 32] do
+    trunc(secret_length / 1.6)
+    |> :crypto.strong_rand_bytes
+    |> Base.encode32(padding: false)
   end
   def gen_secret(_), do: raise ArgumentError, "Invalid length"
 

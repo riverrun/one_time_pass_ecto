@@ -1,7 +1,7 @@
 defmodule OneTimePassEcto.Mixfile do
   use Mix.Project
 
-  @version "0.8.0"
+  @version "1.0.0"
 
   @description """
   One-time password library for Elixir
@@ -28,7 +28,7 @@ defmodule OneTimePassEcto.Mixfile do
 
   defp deps do
     [
-      {:ecto, "~> 2.1"},
+      {:ecto, "~> 2.2"},
       {:postgrex, "~> 0.13", optional: true},
       {:earmark, "~> 1.2", only: :dev},
       {:ex_doc,  "~> 0.16", only: :dev}

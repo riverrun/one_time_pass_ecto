@@ -8,14 +8,14 @@ defmodule OneTimePassEcto.BaseTest do
   end
 
   test "generate secret with correct input" do
-    assert Base.gen_secret() |> byte_size == 32
+    assert Base.gen_secret() |> byte_size == 16
     assert Base.gen_secret(16) |> byte_size == 16
-    assert Base.gen_secret(24) |> byte_size == 24
+    assert Base.gen_secret(26) |> byte_size == 26
     assert Base.gen_secret(32) |> byte_size == 32
   end
 
   test "error when generating secret with the wrong length" do
-    for i <- [10, 20, 30, 40] do
+    for i <- [12, 24, 36] do
       assert_raise ArgumentError, "Invalid length", fn ->
         Base.gen_secret(i)
       end

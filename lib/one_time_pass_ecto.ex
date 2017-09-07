@@ -24,6 +24,22 @@ defmodule OneTimePassEcto do
 
   See the documentation for the OneTimePassEcto.Base module for more details
   about generating and verifying one-time passwords.
+
+  ## Implementation details
+
+  The following notes provide details about how this module implements
+  the verification of one-time passwords.
+
+  It is important not to allow the one-time password to be reused within
+  the timeframe that it is valid.
+
+  For TOTPs, one method of preventing reuse is to compare the output of
+  check_totp (the `last` value) with the previous output. The output
+  should be greater than the previous `last` value.
+
+  In the case of HOTPs, it is important that the database is locked
+  from the time the `last` value is checked until the `last` value is
+  updated.
   """
 
   import Ecto.{Changeset, Query}
