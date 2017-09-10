@@ -39,8 +39,7 @@ defmodule OneTimePassEcto.Mixfile do
     [
       maintainers: ["David Whitlock"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/riverrun/one_time_pass_ecto",
-        "Docs" => "http://hexdocs.pm/one_time_pass_ecto"}
+      links: %{"GitHub" => "https://github.com/riverrun/one_time_pass_ecto"}
     ]
   end
 end
