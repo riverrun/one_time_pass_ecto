@@ -30,8 +30,7 @@ defmodule OneTimePassEcto.Mixfile do
     [
       {:ecto, "~> 2.2"},
       {:postgrex, "~> 0.13", optional: true},
-      {:earmark, "~> 1.2", only: :dev},
-      {:ex_doc,  "~> 0.16", only: :dev}
+      {:ex_doc, "~> 0.18", only: :dev, runtime: false}
     ]
   end
 

@@ -8,18 +8,18 @@ defmodule OneTimePassEcto do
   There are the following options for the one-time passwords:
 
     * HMAC-based one-time passwords
-      * token_length - the length of the one-time password
+      * `:token_length` - the length of the one-time password
         * the default is 6
-      * last - the count when the one-time password was last used
+      * `:last` - the count when the one-time password was last used
         * this count needs to be stored server-side
-      * window - the number of future attempts allowed
+      * `:window` - the number of future attempts allowed
         * the default is 3
     * Time-based one-time passwords
-      * token_length - the length of the one-time password
+      * `:token_length` - the length of the one-time password
         * the default is 6
-      * interval_length - the length of each timed interval
+      * `:interval_length` - the length of each timed interval
         * the default is 30 (seconds)
-      * window - the number of attempts, before and after the current one, allowed
+      * `:window` - the number of attempts, before and after the current one, allowed
         * the default is 1 (1 interval before and 1 interval after)
 
   See the documentation for the OneTimePassEcto.Base module for more details

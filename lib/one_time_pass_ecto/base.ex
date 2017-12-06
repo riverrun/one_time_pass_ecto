@@ -59,7 +59,7 @@ defmodule OneTimePassEcto.Base do
 
   There is one option:
 
-    * token_length - the length of the one-time password
+    * `:token_length` - the length of the one-time password
       * the default is 6
   """
   def gen_hotp(secret, count, opts \\ []) do
@@ -78,9 +78,9 @@ defmodule OneTimePassEcto.Base do
 
   There are two options:
 
-    * token_length - the length of the one-time password
+    * `:token_length` - the length of the one-time password
       * the default is 6
-    * interval_length - the length of each timed interval
+    * `:interval_length` - the length of each timed interval
       * the default is 30 (seconds)
   """
   def gen_totp(secret, opts \\ []) do
@@ -92,11 +92,11 @@ defmodule OneTimePassEcto.Base do
 
   There are three options:
 
-    * token_length - the length of the one-time password
+    * `:token_length` - the length of the one-time password
       * the default is 6
-    * last - the count when the one-time password was last used
+    * `:last` - the count when the one-time password was last used
       * this count needs to be stored server-side
-    * window - the number of future attempts allowed
+    * `:window` - the number of future attempts allowed
       * the default is 3
   """
   def check_hotp(token, secret, opts \\ []) do
@@ -110,11 +110,11 @@ defmodule OneTimePassEcto.Base do
 
   There are three options:
 
-    * token_length - the length of the one-time password
+    * `:token_length` - the length of the one-time password
       * the default is 6
-    * interval_length - the length of each timed interval
+    * `:interval_length` - the length of each timed interval
       * the default is 30 (seconds)
-    * window - the number of attempts, before and after the current one, allowed
+    * `:window` - the number of attempts, before and after the current one, allowed
       * the default is 1 (1 interval before and 1 interval after)
       * you might need to increase this window to allow for clock skew on the server
   """
