@@ -12,7 +12,7 @@ defmodule OneTimePassEcto.Mixfile do
       app: :one_time_pass_ecto,
       version: @version,
       elixir: "~> 1.4",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       description: @description,
       package: package(),
       source_url: "https://github.com/riverrun/one_time_pass_ecto",

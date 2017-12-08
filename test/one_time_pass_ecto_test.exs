@@ -18,7 +18,7 @@ defmodule OneTimePassEctoTest do
   def update_repo(user_id, otp_last) do
     TestRepo.get(TestUser, user_id)
     |> change(%{otp_last: otp_last})
-    |> TestRepo.update!
+    |> TestRepo.update!()
   end
 
   test "check hotp with default options", %{user_id: user_id} do
@@ -68,5 +68,4 @@ defmodule OneTimePassEctoTest do
     {:error, message} = login(user, [])
     assert message
   end
-
 end

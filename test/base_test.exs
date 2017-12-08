@@ -54,8 +54,9 @@ defmodule OneTimePassEcto.BaseTest do
 
   test "check totp" do
     assert Base.gen_totp("MFRGGZDFMZTWQ2LK") |> Base.check_totp("MFRGGZDFMZTWQ2LK")
+
     assert Base.gen_totp("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ")
-    |> Base.check_totp("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ")
+           |> Base.check_totp("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ")
   end
 
   test "check totp fails for outside window" do
@@ -64,5 +65,4 @@ defmodule OneTimePassEcto.BaseTest do
     token = Base.gen_hotp("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", get_count() + 2)
     refute Base.check_totp(token, "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ")
   end
-
 end

@@ -58,14 +58,18 @@ defmodule OneTimePassEcto do
   function.
   """
   def verify(params, repo, user_schema, opts \\ [])
+
   def verify(%{"id" => id, "hotp" => hotp}, repo, user_schema, opts) do
-    {:ok, result} = repo.transaction(fn ->
-      get_user_with_lock(repo, user_schema, id)
-      |> check_hotp(hotp, opts)
-      |> update_otp(repo)
-    end)
+    {:ok, result} =
+      repo.transaction(fn ->
+        get_user_with_lock(repo, user_schema, id)
+        |> check_hotp(hotp, opts)
+        |> update_otp(repo)
+      end)
+
     result
   end
+
   def verify(%{"id" => id, "totp" => totp}, repo, user_schema, opts) do
     repo.get(user_schema, id)
     |> check_totp(totp, opts)
@@ -86,8 +90,10 @@ defmodule OneTimePassEcto do
   end
 
   defp update_otp({_, false}, _), do: {:error, "invalid one-time password"}
+
   defp update_otp({%{otp_last: otp_last} = user, last}, repo) when last > otp_last do
     change(user, %{otp_last: last}) |> repo.update
   end
+
   defp update_otp(_, _), do: {:error, "invalid user-identifier"}
 end

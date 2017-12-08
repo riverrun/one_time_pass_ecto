@@ -32,12 +32,14 @@ defmodule OneTimePassEcto.Base do
   128 bits long, and the recommended length is 160 bits.
   """
   def gen_secret(secret_length \\ 16)
+
   def gen_secret(secret_length) when secret_length in [16, 26, 32] do
     trunc(secret_length / 1.6)
-    |> :crypto.strong_rand_bytes
+    |> :crypto.strong_rand_bytes()
     |> Base.encode32(padding: false)
   end
-  def gen_secret(_), do: raise ArgumentError, "Invalid length"
+
+  def gen_secret(_), do: raise(ArgumentError, "Invalid length")
 
   @doc """
   Check the one-time password is valid.
@@ -48,10 +50,12 @@ defmodule OneTimePassEcto.Base do
   def valid_token(token, _) when not is_binary(token) do
     raise ArgumentError, "The token should be a string"
   end
+
   def valid_token(token, token_length)
-  when token_length >= 6  and token_length == byte_size(token) do
+      when token_length >= 6 and token_length == byte_size(token) do
     Regex.match?(~r/^[0-9]+$/, token)
   end
+
   def valid_token(_, _), do: false
 
   @doc """
@@ -64,12 +68,18 @@ defmodule OneTimePassEcto.Base do
   """
   def gen_hotp(secret, count, opts \\ []) do
     token_length = Keyword.get(opts, :token_length, 6)
-    hash = :crypto.hmac(:sha, Base.decode32!(secret, padding: false),
-                        <<count :: size(8)-big-unsigned-integer-unit(8)>>)
+
+    hash =
+      :crypto.hmac(:sha, Base.decode32!(secret, padding: false), <<
+        count::size(8)-big-unsigned-integer-unit(8)
+      >>)
+
     offset = :binary.at(hash, 19) &&& 15
-    <<truncated :: size(4)-integer-unit(8)>> = :binary.part(hash, offset, 4)
-    (truncated &&& 0x7fffffff) |> rem(trunc(:math.pow(10, token_length)))
-    |> :erlang.integer_to_binary
+    <<truncated::size(4)-integer-unit(8)>> = :binary.part(hash, offset, 4)
+
+    (truncated &&& 0x7FFFFFFF)
+    |> rem(trunc(:math.pow(10, token_length)))
+    |> :erlang.integer_to_binary()
     |> String.pad_leading(token_length, "0")
   end
 
@@ -101,8 +111,10 @@ defmodule OneTimePassEcto.Base do
   """
   def check_hotp(token, secret, opts \\ []) do
     valid_token(token, Keyword.get(opts, :token_length, 6)) and
-    ({last, window} = {Keyword.get(opts, :last, 0), Keyword.get(opts, :window, 3)}
-    check_token(token, secret, last + 1, last + window + 1, opts))
+      (
+        {last, window} = {Keyword.get(opts, :last, 0), Keyword.get(opts, :window, 3)}
+        check_token(token, secret, last + 1, last + window + 1, opts)
+      )
   end
 
   @doc """
@@ -120,9 +132,15 @@ defmodule OneTimePassEcto.Base do
   """
   def check_totp(token, secret, opts \\ []) do
     valid_token(token, Keyword.get(opts, :token_length, 6)) and
-    ({count, window} = {Keyword.get(opts, :interval_length, 30) |> interval_count,
-                       Keyword.get(opts, :window, 1)}
-    check_token(token, secret, count - window, count + window, opts))
+      (
+        {count, window} =
+          {
+            Keyword.get(opts, :interval_length, 30) |> interval_count,
+            Keyword.get(opts, :window, 1)
+          }
+
+        check_token(token, secret, count - window, count + window, opts)
+      )
   end
 
   defp interval_count(interval_length) do
@@ -132,6 +150,7 @@ defmodule OneTimePassEcto.Base do
   defp check_token(_token, _secret, current, last, _opts) when current > last do
     false
   end
+
   defp check_token(token, secret, current, last, opts) do
     case gen_hotp(secret, current, opts) do
       ^token -> current

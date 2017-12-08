@@ -1,14 +1,19 @@
 Logger.configure(level: :info)
 alias OneTimePassEcto.TestRepo
 
-Application.put_env(:one_time_pass_ecto, :pg_test_url,
+Application.put_env(
+  :one_time_pass_ecto,
+  :pg_test_url,
   "ecto://" <> (System.get_env("PG_URL") || "postgres:postgres@localhost")
 )
 
-Application.put_env(:one_time_pass_ecto, TestRepo,
+Application.put_env(
+  :one_time_pass_ecto,
+  TestRepo,
   adapter: Ecto.Adapters.Postgres,
   url: Application.get_env(:one_time_pass_ecto, :pg_test_url) <> "/one_time_pass_ecto_test",
-  pool: Ecto.Adapters.SQL.Sandbox)
+  pool: Ecto.Adapters.SQL.Sandbox
+)
 
 defmodule OneTimePassEcto.TestRepo do
   use Ecto.Repo, otp_app: :one_time_pass_ecto
@@ -19,13 +24,13 @@ defmodule UsersMigration do
 
   def change do
     create table(:users) do
-      add :email, :string
-      add :otp_required, :boolean
-      add :otp_secret, :string
-      add :otp_last, :integer
+      add(:email, :string)
+      add(:otp_required, :boolean)
+      add(:otp_secret, :string)
+      add(:otp_last, :integer)
     end
 
-    create unique_index :users, [:email]
+    create(unique_index(:users, [:email]))
   end
 end
 
@@ -33,10 +38,10 @@ defmodule OneTimePassEcto.TestUser do
   use Ecto.Schema
 
   schema "users" do
-    field :email, :string
-    field :otp_required, :boolean
-    field :otp_secret, :string
-    field :otp_last, :integer
+    field(:email, :string)
+    field(:otp_required, :boolean)
+    field(:otp_secret, :string)
+    field(:otp_last, :integer)
   end
 end
 
@@ -50,10 +55,10 @@ end
 
 {:ok, _} = Ecto.Adapters.Postgres.ensure_all_started(TestRepo, :temporary)
 
-_   = Ecto.Adapters.Postgres.storage_down(TestRepo.config)
-:ok = Ecto.Adapters.Postgres.storage_up(TestRepo.config)
+_ = Ecto.Adapters.Postgres.storage_down(TestRepo.config())
+:ok = Ecto.Adapters.Postgres.storage_up(TestRepo.config())
 
-{:ok, _pid} = TestRepo.start_link
+{:ok, _pid} = TestRepo.start_link()
 
 :ok = Ecto.Migrator.up(TestRepo, 0, UsersMigration, log: false)
 Ecto.Adapters.SQL.Sandbox.mode(TestRepo, :manual)
