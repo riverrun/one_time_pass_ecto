@@ -33,7 +33,7 @@ defmodule OneTimePassEcto.Base do
   """
   def gen_secret(secret_length \\ 16)
 
-  def gen_secret(secret_length) when secret_length in [16, 26, 32] do
+  def gen_secret(secret_length) when secret_length in [16, 26, 32, 64] do
     trunc(secret_length / 1.6)
     |> :crypto.strong_rand_bytes()
     |> Base.encode32(padding: false)

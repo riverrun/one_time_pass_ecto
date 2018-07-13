@@ -12,6 +12,7 @@ defmodule OneTimePassEcto.BaseTest do
     assert Base.gen_secret(16) |> byte_size == 16
     assert Base.gen_secret(26) |> byte_size == 26
     assert Base.gen_secret(32) |> byte_size == 32
+    assert Base.gen_secret(64) |> byte_size == 64
   end
 
   test "error when generating secret with the wrong length" do
