@@ -16,7 +16,10 @@ Application.put_env(
 )
 
 defmodule OneTimePassEcto.TestRepo do
-  use Ecto.Repo, otp_app: :one_time_pass_ecto
+  use Ecto.Repo,
+        otp_app: :one_time_pass_ecto,
+        adapter: Ecto.Adapters.Postgres
+
 end
 
 defmodule UsersMigration do
