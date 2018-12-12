@@ -28,7 +28,8 @@ defmodule OneTimePassEcto.Mixfile do
 
   defp deps do
     [
-      {:ecto, "~> 2.2"},
+      {:ecto, "~> 3.0"},
+      {:ecto_sql, "~> 3.0"},
       {:postgrex, "~> 0.13", optional: true},
       {:ex_doc, "~> 0.18", only: :dev, runtime: false}
     ]
