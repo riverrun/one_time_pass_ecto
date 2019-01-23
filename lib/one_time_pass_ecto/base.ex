@@ -144,7 +144,7 @@ defmodule OneTimePassEcto.Base do
   end
 
   defp interval_count(interval_length) do
-    trunc(System.system_time(:seconds) / interval_length)
+    trunc(System.system_time(:second) / interval_length)
   end
 
   defp check_token(_token, _secret, current, last, _opts) when current > last do
