@@ -4,7 +4,7 @@ defmodule OneTimePassEcto.BaseTest do
   alias OneTimePassEcto.Base
 
   def get_count do
-    trunc(System.system_time(:seconds) / 30)
+    trunc(System.system_time(:second) / 30)
   end
 
   test "generate secret with correct input" do
