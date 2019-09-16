@@ -21,6 +21,9 @@ defmodule OneTimePassEcto do
         * the default is 30 (seconds)
       * `:window` - the number of attempts, before and after the current one, allowed
         * the default is 1 (1 interval before and 1 interval after)
+    * Both HOTP and TOTP
+      * `:otp_secret` - name of the Ecto field holding the secret (default :otp_secret)
+      * `:otp_last` - name of the Ecto field holding the last value (default :otp_last)
 
   See the documentation for the OneTimePassEcto.Base module for more details
   about generating and verifying one-time passwords.
