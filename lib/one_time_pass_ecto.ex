@@ -64,7 +64,7 @@ defmodule OneTimePassEcto do
       repo.transaction(fn ->
         get_user_with_lock(repo, user_schema, id)
         |> check_hotp(hotp, opts)
-        |> update_otp(repo)
+        |> update_otp(repo, opts)
       end)
 
     result
@@ -73,15 +73,20 @@ defmodule OneTimePassEcto do
   def verify(%{"id" => id, "totp" => totp}, repo, user_schema, opts) do
     repo.get(user_schema, id)
     |> check_totp(totp, opts)
-    |> update_otp(repo)
+    |> update_otp(repo, opts)
   end
 
   defp check_hotp(user, hotp, opts) do
-    {user, Base.check_hotp(hotp, user.otp_secret, [last: user.otp_last] ++ opts)}
+    otp_secret = Map.get(user, opts[:otp_secret] || :otp_secret)
+    otp_last = Map.get(user, opts[:otp_last] || :otp_last)
+    
+    {user, Base.check_hotp(hotp, otp_secret, [last: otp_last] ++ opts)}
   end
 
   defp check_totp(user, totp, opts) do
-    {user, Base.check_totp(totp, user.otp_secret, opts)}
+    otp_secret = Map.get(user, opts[:otp_secret] || :otp_secret)
+    
+    {user, Base.check_totp(totp, otp_secret, opts)}
   end
 
   defp get_user_with_lock(repo, user_schema, id) do
@@ -89,11 +94,17 @@ defmodule OneTimePassEcto do
     |> repo.one!
   end
 
-  defp update_otp({_, false}, _), do: {:error, "invalid one-time password"}
+  defp update_otp({_, false}, _, _), do: {:error, "invalid one-time password"}
 
-  defp update_otp({%{otp_last: otp_last} = user, last}, repo) when last > otp_last do
-    change(user, %{otp_last: last}) |> repo.update
+  defp update_otp({user, last}, repo, opts) do
+    otp_last_name = opts[:otp_last] || :otp_last
+    otp_last = Map.get(user, otp_last_name)
+    
+    if last > otp_last do
+      change(user, %{otp_last_name => last}) |> repo.update
+    else
+      {:error, "invalid user-identifier"}
+    end
   end
 
-  defp update_otp(_, _), do: {:error, "invalid user-identifier"}
 end

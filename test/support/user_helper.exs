@@ -6,7 +6,9 @@ defmodule OneTimePassEcto.UserHelper do
     email: "brian@mail.com",
     otp_required: true,
     otp_secret: "MFRGGZDFMZTWQ2LK",
-    otp_last: 0
+    otp_last: 0,
+    second_otp_secret: "E4IX6ABMKZX7GN56",
+    second_otp_last: 0
   }
 
   def add_user(attrs \\ @attrs) do
