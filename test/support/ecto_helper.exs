@@ -31,6 +31,8 @@ defmodule UsersMigration do
       add(:otp_required, :boolean)
       add(:otp_secret, :string)
       add(:otp_last, :integer)
+      add(:second_otp_secret, :string)
+      add(:second_otp_last, :integer)
     end
 
     create(unique_index(:users, [:email]))
@@ -45,6 +47,8 @@ defmodule OneTimePassEcto.TestUser do
     field(:otp_required, :boolean)
     field(:otp_secret, :string)
     field(:otp_last, :integer)
+    field(:second_otp_secret, :string)
+    field(:second_otp_last, :integer)
   end
 end
 
