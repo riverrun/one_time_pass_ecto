@@ -70,9 +70,11 @@ defmodule OneTimePassEcto.Base do
     token_length = Keyword.get(opts, :token_length, 6)
 
     hash =
-      :crypto.hmac(:sha, Base.decode32!(secret, padding: false), <<
-        count::size(8)-big-unsigned-integer-unit(8)
-      >>)
+      hmac(
+        :sha,
+        Base.decode32!(secret, padding: false),
+        <<count::size(8)-big-unsigned-integer-unit(8)>>
+      )
 
     offset = :binary.at(hash, 19) &&& 15
     <<truncated::size(4)-integer-unit(8)>> = :binary.part(hash, offset, 4)
@@ -156,5 +158,12 @@ defmodule OneTimePassEcto.Base do
       ^token -> current
       _ -> check_token(token, secret, current + 1, last, opts)
     end
+  end
+
+  # TODO: remove when we require OTP 22
+  if System.otp_release() >= "22" do
+    defp hmac(digest, key, data), do: :crypto.mac(:hmac, digest, key, data)
+  else
+    defp hmac(digest, key, data), do: :crypto.hmac(digest, key, data)
   end
 end
