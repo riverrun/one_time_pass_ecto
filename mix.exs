@@ -1,7 +1,7 @@
 defmodule OneTimePassEcto.Mixfile do
   use Mix.Project
 
-  @version "1.0.3"
+  @version "1.1.0"
 
   @description """
   One-time password library for Elixir
