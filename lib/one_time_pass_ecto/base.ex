@@ -61,6 +61,8 @@ defmodule OneTimePassEcto.Base do
   @doc """
   Generate a HMAC-based one-time password.
 
+  Note that the `count` (2nd argument) should be a positive integer.
+
   There is one option:
 
     * `:token_length` - the length of the one-time password
